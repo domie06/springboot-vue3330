@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChuandajiangtangDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chuandajiangtang_name as chuandajiangtangName
+        ,a.chuandajiangtang_photo as chuandajiangtangPhoto
+        ,a.chuandajiangtang_video as chuandajiangtangVideo
+        ,a.chuandajiangtang_types as chuandajiangtangTypes
+        ,a.chuandajiangtang_clicknum as chuandajiangtangClicknum
+        ,a.shangxia_types as shangxiaTypes
+        ,a.chuandajiangtang_delete as chuandajiangtangDelete
+        ,a.chuandajiangtang_content as chuandajiangtangContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChuandajiangtangView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM chuandajiangtang  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.chuandajiangtangName != '' and params.chuandajiangtangName != null and params.chuandajiangtangName != 'null' ">
+                and a.chuandajiangtang_name like CONCAT('%',#{params.chuandajiangtangName},'%')
+            </if>
+            <if test=" params.chuandajiangtangVideo != '' and params.chuandajiangtangVideo != null and params.chuandajiangtangVideo != 'null' ">
+                and a.chuandajiangtang_video like CONCAT('%',#{params.chuandajiangtangVideo},'%')
+            </if>
+            <if test="params.chuandajiangtangTypes != null and params.chuandajiangtangTypes != ''">
+                and a.chuandajiangtang_types = #{params.chuandajiangtangTypes}
+            </if>
+            <if test="params.chuandajiangtangClicknumStart != null and params.chuandajiangtangClicknumStart != ''">
+                <![CDATA[  and a.chuandajiangtang_clicknum >= #{params.chuandajiangtangClicknumStart}   ]]>
+            </if>
+            <if test="params.chuandajiangtangClicknumEnd != null and params.chuandajiangtangClicknumEnd != ''">
+                <![CDATA[  and a.chuandajiangtang_clicknum <= #{params.chuandajiangtangClicknumEnd}   ]]>
+            </if>
+             <if test="params.chuandajiangtangClicknum != null and params.chuandajiangtangClicknum != ''">
+                and a.chuandajiangtang_clicknum = #{params.chuandajiangtangClicknum}
+             </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.chuandajiangtangDeleteStart != null and params.chuandajiangtangDeleteStart != ''">
+                <![CDATA[  and a.chuandajiangtang_delete >= #{params.chuandajiangtangDeleteStart}   ]]>
+            </if>
+            <if test="params.chuandajiangtangDeleteEnd != null and params.chuandajiangtangDeleteEnd != ''">
+                <![CDATA[  and a.chuandajiangtang_delete <= #{params.chuandajiangtangDeleteEnd}   ]]>
+            </if>
+             <if test="params.chuandajiangtangDelete != null and params.chuandajiangtangDelete != ''">
+                and a.chuandajiangtang_delete = #{params.chuandajiangtangDelete}
+             </if>
+            <if test=" params.chuandajiangtangContent != '' and params.chuandajiangtangContent != null and params.chuandajiangtangContent != 'null' ">
+                and a.chuandajiangtang_content like CONCAT('%',#{params.chuandajiangtangContent},'%')
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>

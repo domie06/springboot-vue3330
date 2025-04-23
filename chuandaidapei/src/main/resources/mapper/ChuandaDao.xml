@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChuandaDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chuanda_name as chuandaName
+        ,a.chuanda_photo as chuandaPhoto
+        ,a.chuanda_types as chuandaTypes
+        ,a.fengge_types as fenggeTypes
+        ,a.changhe_types as changheTypes
+        ,a.shencai_types as shencaiTypes
+        ,a.chuanda_kucun_number as chuandaKucunNumber
+        ,a.chuanda_price as chuandaPrice
+        ,a.chuanda_old_money as chuandaOldMoney
+        ,a.chuanda_new_money as chuandaNewMoney
+        ,a.chuanda_clicknum as chuandaClicknum
+        ,a.shangxia_types as shangxiaTypes
+        ,a.chuanda_delete as chuandaDelete
+        ,a.chuanda_content as chuandaContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChuandaView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM chuanda  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.chuandaName != '' and params.chuandaName != null and params.chuandaName != 'null' ">
+                and a.chuanda_name like CONCAT('%',#{params.chuandaName},'%')
+            </if>
+            <if test="params.chuandaTypes != null and params.chuandaTypes != ''">
+                and a.chuanda_types = #{params.chuandaTypes}
+            </if>
+            <if test="params.fenggeTypes != null and params.fenggeTypes != ''">
+                and a.fengge_types = #{params.fenggeTypes}
+            </if>
+            <if test="params.changheTypes != null and params.changheTypes != ''">
+                and a.changhe_types = #{params.changheTypes}
+            </if>
+            <if test="params.shencaiTypes != null and params.shencaiTypes != ''">
+                and a.shencai_types = #{params.shencaiTypes}
+            </if>
+            <if test="params.chuandaKucunNumberStart != null and params.chuandaKucunNumberStart != ''">
+                <![CDATA[  and a.chuanda_kucun_number >= #{params.chuandaKucunNumberStart}   ]]>
+            </if>
+            <if test="params.chuandaKucunNumberEnd != null and params.chuandaKucunNumberEnd != ''">
+                <![CDATA[  and a.chuanda_kucun_number <= #{params.chuandaKucunNumberEnd}   ]]>
+            </if>
+             <if test="params.chuandaKucunNumber != null and params.chuandaKucunNumber != ''">
+                and a.chuanda_kucun_number = #{params.chuandaKucunNumber}
+             </if>
+            <if test="params.chuandaPriceStart != null and params.chuandaPriceStart != ''">
+                <![CDATA[  and a.chuanda_price >= #{params.chuandaPriceStart}   ]]>
+            </if>
+            <if test="params.chuandaPriceEnd != null and params.chuandaPriceEnd != ''">
+                <![CDATA[  and a.chuanda_price <= #{params.chuandaPriceEnd}   ]]>
+            </if>
+             <if test="params.chuandaPrice != null and params.chuandaPrice != ''">
+                and a.chuanda_price = #{params.chuandaPrice}
+             </if>
+            <if test="params.chuandaOldMoneyStart != null ">
+                <![CDATA[  and a.chuanda_old_money >= #{params.chuandaOldMoneyStart}   ]]>
+            </if>
+            <if test="params.chuandaOldMoneyEnd != null ">
+                <![CDATA[  and a.chuanda_old_money <= #{params.chuandaOldMoneyEnd}   ]]>
+            </if>
+            <if test="params.chuandaNewMoneyStart != null ">
+                <![CDATA[  and a.chuanda_new_money >= #{params.chuandaNewMoneyStart}   ]]>
+            </if>
+            <if test="params.chuandaNewMoneyEnd != null ">
+                <![CDATA[  and a.chuanda_new_money <= #{params.chuandaNewMoneyEnd}   ]]>
+            </if>
+            <if test="params.chuandaClicknumStart != null and params.chuandaClicknumStart != ''">
+                <![CDATA[  and a.chuanda_clicknum >= #{params.chuandaClicknumStart}   ]]>
+            </if>
+            <if test="params.chuandaClicknumEnd != null and params.chuandaClicknumEnd != ''">
+                <![CDATA[  and a.chuanda_clicknum <= #{params.chuandaClicknumEnd}   ]]>
+            </if>
+             <if test="params.chuandaClicknum != null and params.chuandaClicknum != ''">
+                and a.chuanda_clicknum = #{params.chuandaClicknum}
+             </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.chuandaDeleteStart != null and params.chuandaDeleteStart != ''">
+                <![CDATA[  and a.chuanda_delete >= #{params.chuandaDeleteStart}   ]]>
+            </if>
+            <if test="params.chuandaDeleteEnd != null and params.chuandaDeleteEnd != ''">
+                <![CDATA[  and a.chuanda_delete <= #{params.chuandaDeleteEnd}   ]]>
+            </if>
+             <if test="params.chuandaDelete != null and params.chuandaDelete != ''">
+                and a.chuanda_delete = #{params.chuandaDelete}
+             </if>
+            <if test=" params.chuandaContent != '' and params.chuandaContent != null and params.chuandaContent != 'null' ">
+                and a.chuanda_content like CONCAT('%',#{params.chuandaContent},'%')
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>

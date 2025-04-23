@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChuandaOrderDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chuanda_order_uuid_number as chuandaOrderUuidNumber
+        ,a.address_id as addressId
+        ,a.chuanda_id as chuandaId
+        ,a.yonghu_id as yonghuId
+        ,a.buy_number as buyNumber
+        ,a.chuanda_order_true_price as chuandaOrderTruePrice
+        ,a.chuanda_order_courier_name as chuandaOrderCourierName
+        ,a.chuanda_order_courier_number as chuandaOrderCourierNumber
+        ,a.chuanda_order_types as chuandaOrderTypes
+        ,a.chuanda_order_payment_types as chuandaOrderPaymentTypes
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChuandaOrderView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,address.yonghu_id as addressYonghuId
+        ,address.address_name as addressName
+        ,address.address_phone as addressPhone
+        ,address.address_dizhi as addressDizhi
+        ,address.isdefault_types as isdefaultTypes
+        ,chuanda.chuanda_name as chuandaName
+        ,chuanda.chuanda_photo as chuandaPhoto
+        ,chuanda.chuanda_types as chuandaTypes
+        ,chuanda.fengge_types as fenggeTypes
+        ,chuanda.changhe_types as changheTypes
+        ,chuanda.shencai_types as shencaiTypes
+        ,chuanda.chuanda_kucun_number as chuandaKucunNumber
+        ,chuanda.chuanda_price as chuandaPrice
+        ,chuanda.chuanda_old_money as chuandaOldMoney
+        ,chuanda.chuanda_new_money as chuandaNewMoney
+        ,chuanda.chuanda_clicknum as chuandaClicknum
+        ,chuanda.shangxia_types as shangxiaTypes
+        ,chuanda.chuanda_delete as chuandaDelete
+        ,chuanda.chuanda_content as chuandaContent
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.new_money as newMoney
+        ,yonghu.yonghu_sum_jifen as yonghuSumJifen
+        ,yonghu.yonghu_new_jifen as yonghuNewJifen
+        ,yonghu.huiyuandengji_types as huiyuandengjiTypes
+
+        FROM chuanda_order  a
+        left JOIN address address ON a.address_id = address.id
+        left JOIN chuanda chuanda ON a.chuanda_id = chuanda.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.chuandaOrderUuidNumber != '' and params.chuandaOrderUuidNumber != null and params.chuandaOrderUuidNumber != 'null' ">
+                and a.chuanda_order_uuid_number like CONCAT('%',#{params.chuandaOrderUuidNumber},'%')
+            </if>
+            <if test="params.addressId != null and params.addressId != ''">
+                and (
+                    a.address_id = #{params.addressId}
+                )
+            </if>
+            <if test="params.chuandaId != null and params.chuandaId != ''">
+                and (
+                    a.chuanda_id = #{params.chuandaId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test="params.buyNumberStart != null and params.buyNumberStart != ''">
+                <![CDATA[  and a.buy_number >= #{params.buyNumberStart}   ]]>
+            </if>
+            <if test="params.buyNumberEnd != null and params.buyNumberEnd != ''">
+                <![CDATA[  and a.buy_number <= #{params.buyNumberEnd}   ]]>
+            </if>
+             <if test="params.buyNumber != null and params.buyNumber != ''">
+                and a.buy_number = #{params.buyNumber}
+             </if>
+            <if test="params.chuandaOrderTruePriceStart != null ">
+                <![CDATA[  and a.chuanda_order_true_price >= #{params.chuandaOrderTruePriceStart}   ]]>
+            </if>
+            <if test="params.chuandaOrderTruePriceEnd != null ">
+                <![CDATA[  and a.chuanda_order_true_price <= #{params.chuandaOrderTruePriceEnd}   ]]>
+            </if>
+            <if test=" params.chuandaOrderCourierName != '' and params.chuandaOrderCourierName != null and params.chuandaOrderCourierName != 'null' ">
+                and a.chuanda_order_courier_name like CONCAT('%',#{params.chuandaOrderCourierName},'%')
+            </if>
+            <if test=" params.chuandaOrderCourierNumber != '' and params.chuandaOrderCourierNumber != null and params.chuandaOrderCourierNumber != 'null' ">
+                and a.chuanda_order_courier_number like CONCAT('%',#{params.chuandaOrderCourierNumber},'%')
+            </if>
+            <if test="params.chuandaOrderTypes != null and params.chuandaOrderTypes != ''">
+                and a.chuanda_order_types = #{params.chuandaOrderTypes}
+            </if>
+            <if test="params.chuandaOrderPaymentTypes != null and params.chuandaOrderPaymentTypes != ''">
+                and a.chuanda_order_payment_types = #{params.chuandaOrderPaymentTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断收货地址的id不为空 -->
+            <if test=" params.addressIdNotNull != '' and params.addressIdNotNull != null and params.addressIdNotNull != 'null' ">
+                and a.address_id IS NOT NULL
+            </if>
+            <if test=" params.addressName != '' and params.addressName != null and params.addressName != 'null' ">
+                and address.address_name like CONCAT('%',#{params.addressName},'%')
+            </if>
+            <if test=" params.addressPhone != '' and params.addressPhone != null and params.addressPhone != 'null' ">
+                and address.address_phone like CONCAT('%',#{params.addressPhone},'%')
+            </if>
+            <if test=" params.addressDizhi != '' and params.addressDizhi != null and params.addressDizhi != 'null' ">
+                and address.address_dizhi like CONCAT('%',#{params.addressDizhi},'%')
+            </if>
+            <if test="params.isdefaultTypes != null  and params.isdefaultTypes != ''">
+                and address.isdefault_types = #{params.isdefaultTypes}
+            </if>
+
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(address.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(address.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test=" params.updateTimeStart != '' and params.updateTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(address.update_time) >= UNIX_TIMESTAMP(#{params.updateTimeStart}) ]]>
+            </if>
+            <if test=" params.updateTimeEnd != '' and params.updateTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(address.update_time) <= UNIX_TIMESTAMP(#{params.updateTimeEnd}) ]]>
+            </if>
+                <!-- 判断穿搭的id不为空 -->
+            <if test=" params.chuandaIdNotNull != '' and params.chuandaIdNotNull != null and params.chuandaIdNotNull != 'null' ">
+                and a.chuanda_id IS NOT NULL
+            </if>
+            <if test=" params.chuandaName != '' and params.chuandaName != null and params.chuandaName != 'null' ">
+                and chuanda.chuanda_name like CONCAT('%',#{params.chuandaName},'%')
+            </if>
+            <if test="params.chuandaTypes != null  and params.chuandaTypes != ''">
+                and chuanda.chuanda_types = #{params.chuandaTypes}
+            </if>
+
+            <if test="params.fenggeTypes != null  and params.fenggeTypes != ''">
+                and chuanda.fengge_types = #{params.fenggeTypes}
+            </if>
+
+            <if test="params.changheTypes != null  and params.changheTypes != ''">
+                and chuanda.changhe_types = #{params.changheTypes}
+            </if>
+
+            <if test="params.shencaiTypes != null  and params.shencaiTypes != ''">
+                and chuanda.shencai_types = #{params.shencaiTypes}
+            </if>
+
+            <if test="params.chuandaKucunNumberStart != null  and params.chuandaKucunNumberStart != '' ">
+                <![CDATA[  and chuanda.chuanda_kucun_number >= #{params.chuandaKucunNumberStart}   ]]>
+            </if>
+            <if test="params.chuandaKucunNumberEnd != null  and params.chuandaKucunNumberEnd != '' ">
+                <![CDATA[  and chuanda.chuanda_kucun_number <= #{params.chuandaKucunNumberEnd}   ]]>
+            </if>
+            <if test="params.chuandaKucunNumber != null  and params.chuandaKucunNumber != '' ">
+                and chuanda.chuanda_kucun_number = #{params.chuandaKucunNumber}
+            </if>
+            <if test="params.chuandaPriceStart != null  and params.chuandaPriceStart != '' ">
+                <![CDATA[  and chuanda.chuanda_price >= #{params.chuandaPriceStart}   ]]>
+            </if>
+            <if test="params.chuandaPriceEnd != null  and params.chuandaPriceEnd != '' ">
+                <![CDATA[  and chuanda.chuanda_price <= #{params.chuandaPriceEnd}   ]]>
+            </if>
+            <if test="params.chuandaPrice != null  and params.chuandaPrice != '' ">
+                and chuanda.chuanda_price = #{params.chuandaPrice}
+            </if>
+            <if test="params.chuandaOldMoneyStart != null ">
+                <![CDATA[  and chuanda.chuanda_old_money >= #{params.chuandaOldMoneyStart}   ]]>
+            </if>
+            <if test="params.chuandaOldMoneyEnd != null ">
+                <![CDATA[  and chuanda.chuanda_old_money <= #{params.chuandaOldMoneyEnd}   ]]>
+            </if>
+            <if test="params.chuandaNewMoneyStart != null ">
+                <![CDATA[  and chuanda.chuanda_new_money >= #{params.chuandaNewMoneyStart}   ]]>
+            </if>
+            <if test="params.chuandaNewMoneyEnd != null ">
+                <![CDATA[  and chuanda.chuanda_new_money <= #{params.chuandaNewMoneyEnd}   ]]>
+            </if>
+            <if test="params.chuandaClicknumStart != null  and params.chuandaClicknumStart != '' ">
+                <![CDATA[  and chuanda.chuanda_clicknum >= #{params.chuandaClicknumStart}   ]]>
+            </if>
+            <if test="params.chuandaClicknumEnd != null  and params.chuandaClicknumEnd != '' ">
+                <![CDATA[  and chuanda.chuanda_clicknum <= #{params.chuandaClicknumEnd}   ]]>
+            </if>
+            <if test="params.chuandaClicknum != null  and params.chuandaClicknum != '' ">
+                and chuanda.chuanda_clicknum = #{params.chuandaClicknum}
+            </if>
+            <if test="params.shangxiaTypes != null  and params.shangxiaTypes != ''">
+                and chuanda.shangxia_types = #{params.shangxiaTypes}
+            </if>
+
+            <if test="params.chuandaDeleteStart != null  and params.chuandaDeleteStart != '' ">
+                <![CDATA[  and chuanda.chuanda_delete >= #{params.chuandaDeleteStart}   ]]>
+            </if>
+            <if test="params.chuandaDeleteEnd != null  and params.chuandaDeleteEnd != '' ">
+                <![CDATA[  and chuanda.chuanda_delete <= #{params.chuandaDeleteEnd}   ]]>
+            </if>
+            <if test="params.chuandaDelete != null  and params.chuandaDelete != '' ">
+                and chuanda.chuanda_delete = #{params.chuandaDelete}
+            </if>
+            <if test=" params.chuandaContent != '' and params.chuandaContent != null and params.chuandaContent != 'null' ">
+                and chuanda.chuanda_content like CONCAT('%',#{params.chuandaContent},'%')
+            </if>
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+            <if test="params.newMoneyStart != null ">
+                <![CDATA[  and yonghu.new_money >= #{params.newMoneyStart}   ]]>
+            </if>
+            <if test="params.newMoneyEnd != null ">
+                <![CDATA[  and yonghu.new_money <= #{params.newMoneyEnd}   ]]>
+            </if>
+            <if test="params.yonghuSumJifenStart != null ">
+                <![CDATA[  and yonghu.yonghu_sum_jifen >= #{params.yonghuSumJifenStart}   ]]>
+            </if>
+            <if test="params.yonghuSumJifenEnd != null ">
+                <![CDATA[  and yonghu.yonghu_sum_jifen <= #{params.yonghuSumJifenEnd}   ]]>
+            </if>
+            <if test="params.yonghuNewJifenStart != null ">
+                <![CDATA[  and yonghu.yonghu_new_jifen >= #{params.yonghuNewJifenStart}   ]]>
+            </if>
+            <if test="params.yonghuNewJifenEnd != null ">
+                <![CDATA[  and yonghu.yonghu_new_jifen <= #{params.yonghuNewJifenEnd}   ]]>
+            </if>
+            <if test="params.huiyuandengjiTypes != null  and params.huiyuandengjiTypes != ''">
+                and yonghu.huiyuandengji_types = #{params.huiyuandengjiTypes}
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
